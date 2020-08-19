@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect} from "react";
+import React, {useMemo, useState, useEffect, useContext} from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import {makeStyles} from "@material-ui/core/styles";
@@ -8,6 +8,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
+import {NegotiationGuideContext} from "../contexts/NegotiationGuideContext.js";
 import NegotiationItem from "../components/NegotiationItem.jsx";
 import rawData from "../data/processedData.js";
 
@@ -45,7 +46,9 @@ const useStyles = makeStyles({
 const MAX_ITEMS = 20;
 
 export default function NegotiationGuide() {
-  const [useIcon, setUseIcon] = useState(false);
+  const [context, setContext] = useState({
+    useIcon: false,
+  });
   const [data, setData] = useState(rawData);
   const [top, setTop] = useState(0);
   const [bottom, setBottom] = useState(MAX_ITEMS);
@@ -67,7 +70,7 @@ export default function NegotiationGuide() {
     for (let i = top; i < length; ++i) {
       items.push(
         <div key={i}>
-          <NegotiationItem dataObject={data[i]} useIcon={useIcon} />
+          <NegotiationItem dataObject={data[i]} />
         </div>
       );
     }
@@ -75,12 +78,17 @@ export default function NegotiationGuide() {
   }
 
   function useIconHandler() {
-    setUseIcon(!useIcon);
+    setContext({
+      ...context,
+      useIcon: !context.useIcon
+    });
   }
 
   function searchHandler(event) {
     const value = event.target.value;
-    setData(rawData.filter((dataObject) => dataObject.question.includes(value)));
+    setData(
+      rawData.filter((dataObject) => dataObject.question.includes(value))
+    );
     setTop(0);
     setBottom(MAX_ITEMS);
   }
@@ -102,39 +110,41 @@ export default function NegotiationGuide() {
       }
     };
 
-    window.addEventListener('scroll', scrollHandler);
+    window.addEventListener("scroll", scrollHandler);
     return () => {
-      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener("scroll", scrollHandler);
     };
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Container className={classes.root} maxWidth='lg'>
-        <Container className={classes.controlContainer} maxWidth='lg'>
-          <TextField
-            className={classes.textField}
-            variant='filled'
-            label='Search questions'
-            onChange={searchHandler}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={useIcon}
-                onChange={useIconHandler}
-                name='checkedB'
-                color='primary'
-              />
-            }
-            label='Use icon'
-          />
+    <NegotiationGuideContext.Provider value={[context, setContext]}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Container className={classes.root} maxWidth='lg'>
+          <Container className={classes.controlContainer} maxWidth='lg'>
+            <TextField
+              className={classes.textField}
+              variant='filled'
+              label='Search questions'
+              onChange={searchHandler}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={context.useIcon}
+                  onChange={useIconHandler}
+                  name='checkedB'
+                  color='primary'
+                />
+              }
+              label='Use icon'
+            />
+          </Container>
+          <Container maxWidth='lg' className={classes.contentContainer}>
+            <div>{createContent()}</div>
+          </Container>
         </Container>
-        <Container maxWidth='lg' className={classes.contentContainer}>
-          <div>{createContent()}</div>
-        </Container>
-      </Container>
-    </ThemeProvider>
+      </ThemeProvider>
+    </NegotiationGuideContext.Provider>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 
 import textToIcon from '../util/textToIcon.js';
+import {NegotiationGuideContext} from '../contexts/NegotiationGuideContext.js';
 
 const useStyles = makeStyles({
   table: {
@@ -20,10 +21,11 @@ const useStyles = makeStyles({
 });
 
 export default function NegotiationItem(props) {
+  const [context] = useContext(NegotiationGuideContext);
   const classes = useStyles();
 
   function getStatus(status) {
-    return props.useIcon ? textToIcon(status) : status;
+    return context.useIcon ? textToIcon(status) : status;
   }
 
   return (
