@@ -9,7 +9,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
 import NegotiationItem from "../components/NegotiationItem.jsx";
-import data from "../data/processedData.js";
+import rawData from "../data/processedData.js";
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -46,6 +46,7 @@ const MAX_ITEMS = 20;
 
 export default function NegotiationGuide() {
   const [useIcon, setUseIcon] = useState(false);
+  const [data, setData] = useState(rawData);
   const [top, setTop] = useState(0);
   const [bottom, setBottom] = useState(MAX_ITEMS);
   const classes = useStyles();
@@ -62,7 +63,8 @@ export default function NegotiationGuide() {
 
   function createContent() {
     const items = [];
-    for (let i = top; i < bottom; ++i) {
+    const length = Math.min(data.length, bottom);
+    for (let i = top; i < length; ++i) {
       items.push(
         <div key={i}>
           <NegotiationItem dataObject={data[i]} useIcon={useIcon} />
@@ -74,6 +76,13 @@ export default function NegotiationGuide() {
 
   function useIconHandler() {
     setUseIcon(!useIcon);
+  }
+
+  function searchHandler(event) {
+    const value = event.target.value;
+    setData(rawData.filter((dataObject) => dataObject.question.includes(value)));
+    setTop(0);
+    setBottom(MAX_ITEMS);
   }
 
   useEffect(() => {
@@ -108,6 +117,7 @@ export default function NegotiationGuide() {
             className={classes.textField}
             variant='filled'
             label='Search questions'
+            onChange={searchHandler}
           />
           <FormControlLabel
             control={
