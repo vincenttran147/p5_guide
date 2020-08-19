@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useMemo, useState, useEffect} from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import {makeStyles} from "@material-ui/core/styles";
@@ -27,23 +27,27 @@ const useStyles = makeStyles({
     position: "relative",
   },
   textField: {
-    width: "100%"
+    width: "100%",
   },
   controlContainer: {
-    position: 'sticky',
+    position: "sticky",
     top: 0,
     backgroundColor: darkTheme.palette.background.paper,
     padding: 5,
     border: `2px solid ${darkTheme.palette.text.disabled}`,
-    borderRadius: 5
+    borderRadius: 5,
   },
   contentContainer: {
-    padding: 0
-  }
+    padding: 0,
+  },
 });
+
+const MAX_ITEMS = 20;
 
 export default function NegotiationGuide() {
   const [useIcon, setUseIcon] = useState(false);
+  const [top, setTop] = useState(0);
+  const [bottom, setBottom] = useState(MAX_ITEMS);
   const classes = useStyles();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
@@ -57,16 +61,43 @@ export default function NegotiationGuide() {
   );
 
   function createContent() {
-    return data.map((dataObject, index) => (
-      <div key={index}>
-        <NegotiationItem dataObject={dataObject} useIcon={useIcon} />
-      </div>
-    ));
+    const items = [];
+    for (let i = top; i < bottom; ++i) {
+      items.push(
+        <div key={i}>
+          <NegotiationItem dataObject={data[i]} useIcon={useIcon} />
+        </div>
+      );
+    }
+    return items;
   }
 
   function useIconHandler() {
     setUseIcon(!useIcon);
   }
+
+  useEffect(() => {
+    const scrollHandler = () => {
+      let newTop, newBottom;
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        newBottom = Math.min(bottom + MAX_ITEMS, data.length);
+        newTop = Math.min(bottom - MAX_ITEMS, top + MAX_ITEMS);
+        setBottom(newBottom);
+        setTop(newTop);
+      }
+      if (window.scrollY <= 0) {
+        newTop = Math.max(0, top - MAX_ITEMS);
+        newBottom = Math.max(top + MAX_ITEMS, bottom - MAX_ITEMS);
+        setTop(newTop);
+        setBottom(newBottom);
+      }
+    };
+
+    window.addEventListener('scroll', scrollHandler);
+    return () => {
+      window.removeEventListener('scroll', scrollHandler);
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
