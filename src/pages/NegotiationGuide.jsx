@@ -37,6 +37,7 @@ const useStyles = makeStyles({
     padding: 5,
     border: `2px solid ${darkTheme.palette.text.disabled}`,
     borderRadius: 5,
+    zIndex: 1
   },
   contentContainer: {
     padding: 0,
