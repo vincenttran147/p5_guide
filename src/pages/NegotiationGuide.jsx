@@ -1,14 +1,14 @@
-import React, {useMemo, useState, useEffect, useContext} from "react";
+import React, { useMemo, useState, useEffect, useContext } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
-import {NegotiationGuideContext} from "../contexts/NegotiationGuideContext.js";
+import { NegotiationGuideContext } from "../contexts/NegotiationGuideContext.js";
 import NegotiationItem from "../components/NegotiationItem.jsx";
 import rawData from "../data/processedData.js";
 
@@ -80,14 +80,16 @@ export default function NegotiationGuide() {
   function useIconHandler() {
     setContext({
       ...context,
-      useIcon: !context.useIcon
+      useIcon: !context.useIcon,
     });
   }
 
   function searchHandler(event) {
-    const value = event.target.value;
+    const value = event.target.value.toLowerCase();
     setData(
-      rawData.filter((dataObject) => dataObject.question.includes(value))
+      rawData.filter((dataObject) =>
+        dataObject.question.toLowerCase().includes(value)
+      )
     );
     setTop(0);
     setBottom(MAX_ITEMS);
@@ -114,18 +116,18 @@ export default function NegotiationGuide() {
     return () => {
       window.removeEventListener("scroll", scrollHandler);
     };
-  }, []);
+  }, [bottom, top]);
 
   return (
     <NegotiationGuideContext.Provider value={[context, setContext]}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container className={classes.root} maxWidth='lg'>
-          <Container className={classes.controlContainer} maxWidth='lg'>
+        <Container className={classes.root} maxWidth="lg">
+          <Container className={classes.controlContainer} maxWidth="lg">
             <TextField
               className={classes.textField}
-              variant='filled'
-              label='Search questions'
+              variant="filled"
+              label="Search questions"
               onChange={searchHandler}
             />
             <FormControlLabel
@@ -133,14 +135,15 @@ export default function NegotiationGuide() {
                 <Switch
                   checked={context.useIcon}
                   onChange={useIconHandler}
-                  name='checkedB'
-                  color='primary'
+                  name="checkedB"
+                  color="primary"
                 />
               }
-              label='Use icon'
+              label="Use icon"
             />
+            <div>Total results: {bottom}</div>
           </Container>
-          <Container maxWidth='lg' className={classes.contentContainer}>
+          <Container maxWidth="lg" className={classes.contentContainer}>
             <div>{createContent()}</div>
           </Container>
         </Container>
