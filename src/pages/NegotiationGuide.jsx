@@ -6,6 +6,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormLabel from "@material-ui/core/FormLabel";
 import Switch from "@material-ui/core/Switch";
 
 import { NegotiationGuideContext } from "../contexts/NegotiationGuideContext.js";
@@ -37,10 +38,15 @@ const useStyles = makeStyles({
     padding: 5,
     border: `2px solid ${darkTheme.palette.text.disabled}`,
     borderRadius: 5,
-    zIndex: 1
+    zIndex: 1,
   },
   contentContainer: {
     padding: 0,
+  },
+  infoContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: 'center'
   },
 });
 
@@ -131,18 +137,20 @@ export default function NegotiationGuide() {
               label="Search questions"
               onChange={searchHandler}
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={context.useIcon}
-                  onChange={useIconHandler}
-                  name="checkedB"
-                  color="primary"
-                />
-              }
-              label="Use icon"
-            />
-            <div>Total results: {bottom}</div>
+            <Container className={classes.infoContainer} maxWidth="lg">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={context.useIcon}
+                    onChange={useIconHandler}
+                    name="checkedB"
+                    color="primary"
+                  />
+                }
+                label="Use icon"
+              />
+              <FormLabel>Total results: {data.length}</FormLabel>
+            </Container>
           </Container>
           <Container maxWidth="lg" className={classes.contentContainer}>
             <div>{createContent()}</div>
