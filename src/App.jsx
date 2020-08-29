@@ -21,7 +21,6 @@ const drawerWidth = 240;
 const styles = makeStyles((theme) => ({
   root: {
     width: window.innerWidth,
-    height: window.innerHeight,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
