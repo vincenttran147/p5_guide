@@ -2,7 +2,7 @@ export default function (text) {
   text = text.toLowerCase();
   switch (text) {
     case 'good':
-      return '🎶';
+      return '✨';
     case 'ok':
       return '💦';
     case 'bad':
