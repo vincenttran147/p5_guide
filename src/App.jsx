@@ -14,6 +14,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import DarkModeMenuItem from "./components/menuItems/DarkModeMenuItem.jsx";
 import AbstractMenuItem from "./components/menuItems/AbstractMenuItem.jsx";
+import { AppContext } from "./contexts/AppContext.js";
 import routes from "./routeConfig.js";
 
 const drawerWidth = 240;
@@ -51,9 +52,14 @@ const styles = makeStyles((theme) => ({
 }));
 
 export default function Wrapper() {
+  const [context, setContext] = useState({
+    darkMode: false,
+  });
   const [open, setOpen] = useState(false);
   const classes = styles();
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const prefersDarkMode = useMediaQuery(
+    `(prefers-color-scheme: ${context.darkMode ? "dark" : "light"})`
+  );
   const theme = useMemo(
     () =>
       createMuiTheme({
@@ -69,44 +75,46 @@ export default function Wrapper() {
   }
 
   return (
-    <div className={classes.root}>
-      <ThemeProvider theme={theme}>
-        <Drawer
-          variant="permanent"
-          className={clsx(classes.drawer, {
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          })}
-          classes={{
-            paper: clsx({
+    <AppContext.Provider value={[context, setContext]}>
+      <div className={classes.root}>
+        <ThemeProvider theme={theme}>
+          <Drawer
+            variant="permanent"
+            className={clsx(classes.drawer, {
               [classes.drawerOpen]: open,
               [classes.drawerClose]: !open,
-            }),
-          }}
-        >
-          <List>
-            <AbstractMenuItem
-              onClick={toggleDrawer}
-              text={open ? "Close menu" : "Open menu"}
-              icon={<MenuIcon />}
-            />
-            <DarkModeMenuItem />
-          </List>
-        </Drawer>
-        <CssBaseline />
-        <Router>
-          <Switch>
-            {routes.map((route, i) => (
-              <Route
-                exact
-                key={i}
-                path={route.path}
-                render={(props) => <route.component {...props} />}
+            })}
+            classes={{
+              paper: clsx({
+                [classes.drawerOpen]: open,
+                [classes.drawerClose]: !open,
+              }),
+            }}
+          >
+            <List>
+              <AbstractMenuItem
+                onClick={toggleDrawer}
+                text={open ? "Close menu" : "Open menu"}
+                icon={<MenuIcon />}
               />
-            ))}
-          </Switch>
-        </Router>
-      </ThemeProvider>
-    </div>
+              <DarkModeMenuItem />
+            </List>
+          </Drawer>
+          <CssBaseline />
+          <Router>
+            <Switch>
+              {routes.map((route, i) => (
+                <Route
+                  exact
+                  key={i}
+                  path={route.path}
+                  render={(props) => <route.component {...props} />}
+                />
+              ))}
+            </Switch>
+          </Router>
+        </ThemeProvider>
+      </div>
+    </AppContext.Provider>
   );
 }

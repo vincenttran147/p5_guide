@@ -2,9 +2,7 @@ import React, { useMemo, useState, useEffect, useContext } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import { createMuiTheme } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import Switch from "@material-ui/core/Switch";
@@ -13,13 +11,7 @@ import { NegotiationGuideContext } from "../contexts/NegotiationGuideContext.js"
 import NegotiationItem from "../components/NegotiationItem.jsx";
 import rawData from "../data/processedData.js";
 
-const darkTheme = createMuiTheme({
-  palette: {
-    type: "dark",
-  },
-});
-
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
@@ -34,9 +26,10 @@ const useStyles = makeStyles({
   controlContainer: {
     position: "sticky",
     top: 0,
-    backgroundColor: darkTheme.palette.background.paper,
     padding: 5,
-    border: `2px solid ${darkTheme.palette.text.disabled}`,
+    backgroundColor: theme.palette.background.paper,
+    borderWidth: 2,
+    borderStyle: 'solid',
     borderRadius: 5,
     zIndex: 1,
   },
@@ -46,9 +39,9 @@ const useStyles = makeStyles({
   infoContainer: {
     display: "flex",
     flexDirection: "row",
-    alignItems: 'center'
-  },
-});
+    alignItems: "center",
+  }
+}));
 
 const MAX_ITEMS = 20;
 
@@ -60,16 +53,6 @@ export default function NegotiationGuide() {
   const [top, setTop] = useState(0);
   const [bottom, setBottom] = useState(MAX_ITEMS);
   const classes = useStyles();
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const theme = useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? "dark" : "light",
-        },
-      }),
-    [prefersDarkMode]
-  );
 
   function createContent() {
     const items = [];
@@ -127,36 +110,33 @@ export default function NegotiationGuide() {
 
   return (
     <NegotiationGuideContext.Provider value={[context, setContext]}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Container className={classes.root} maxWidth="lg">
-          <Container className={classes.controlContainer} maxWidth="lg">
-            <TextField
-              className={classes.textField}
-              variant="filled"
-              label="Search questions"
-              onChange={searchHandler}
+      <Container className={classes.root} maxWidth="lg">
+        <Container className={classes.controlContainer} maxWidth="lg">
+          <TextField
+            className={classes.textField}
+            variant="filled"
+            label="Search questions"
+            onChange={searchHandler}
+          />
+          <Container className={classes.infoContainer} maxWidth="lg">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={context.useIcon}
+                  onChange={useIconHandler}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label="Use icon"
             />
-            <Container className={classes.infoContainer} maxWidth="lg">
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={context.useIcon}
-                    onChange={useIconHandler}
-                    name="checkedB"
-                    color="primary"
-                  />
-                }
-                label="Use icon"
-              />
-              <FormLabel>Total results: {data.length}</FormLabel>
-            </Container>
-          </Container>
-          <Container maxWidth="lg" className={classes.contentContainer}>
-            <div>{createContent()}</div>
+            <FormLabel>Total results: {data.length}</FormLabel>
           </Container>
         </Container>
-      </ThemeProvider>
+        <Container maxWidth="lg" className={classes.contentContainer}>
+          <div>{createContent()}</div>
+        </Container>
+      </Container>
     </NegotiationGuideContext.Provider>
   );
 }
