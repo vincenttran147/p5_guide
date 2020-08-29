@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import clsx from "clsx";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, useHistory } from "react-router-dom";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {
   createMuiTheme,
@@ -13,6 +13,7 @@ import List from "@material-ui/core/List";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import DarkModeMenuItem from "./components/menuItems/DarkModeMenuItem.jsx";
+import HomeMenuItem from "./components/menuItems/HomeMenuItem.jsx";
 import AbstractMenuItem from "./components/menuItems/AbstractMenuItem.jsx";
 import { AppContext } from "./contexts/AppContext.js";
 import routes from "./routeConfig.js";
@@ -54,6 +55,7 @@ const styles = makeStyles((theme) => ({
 export default function Wrapper() {
   const [context, setContext] = useState({
     darkMode: false,
+    history: null
   });
   const [open, setOpen] = useState(false);
   const classes = styles();
@@ -97,6 +99,7 @@ export default function Wrapper() {
                 text={open ? "Close menu" : "Open menu"}
                 icon={<MenuIcon />}
               />
+              <HomeMenuItem />
               <DarkModeMenuItem />
             </List>
           </Drawer>

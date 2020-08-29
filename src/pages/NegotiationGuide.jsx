@@ -1,8 +1,7 @@
-import React, { useMemo, useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { createMuiTheme } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import Switch from "@material-ui/core/Switch";
